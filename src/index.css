@@ -1,0 +1,29 @@
+:root {
+ 
+/* Colors */
+  --bg: #ece8fc;
+  --blue: #5ed0ff;
+  --primary: #6c63ff;
+  --primary-light: #d9dbff;
+
+  --card: rgba(157, 139, 255, 0.2);
+  --input: rgba(253, 254, 255, 0.4);
+  --inp-active: rgba(157, 139, 255, 0.1);
+  --border-in-ac: rgba(157, 139, 255, 0.4);
+
+  --checkbox: #6a8afa;
+  --check:#FDFEFF;
+
+   /*Text*/
+  --text-h1: #000000;
+  --h2: #1D2340;
+  --text-2: #4F5878;
+  --text-3: #FDFEFF;
+  --text-maska:  rgba(212, 213, 217, 0.75);
+  --text-input: #6e8ff3;
+
+  /*Font*/
+
+
+ 
+}

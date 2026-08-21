@@ -1,0 +1,12 @@
+.app{
+    display: flex;
+    min-height: 100hv;
+}
+aside{
+    width: 250px;
+    min-height: 100hv;
+    }
+    main{ 
+        flex: 1;
+
+    }
