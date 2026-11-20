@@ -17,3 +17,9 @@ export function plural(n, [one, few, many]) {
   if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return few
   return many
 }
+
+// 2025-05-12 → 12.05.2025
+export function formatDate(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  return m ? `${m[3]}.${m[2]}.${m[1]}` : ''
+}

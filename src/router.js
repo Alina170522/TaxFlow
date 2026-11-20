@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import HomePage from './pages/HomePage.vue'
 import DeductionPage from './pages/DeductionPage.vue'
 import StubPage from './pages/StubPage.vue'
+import DocumentsPage from './pages/DocumentsPage.vue'
 
 // Hash-маршруты: работают на GitHub Pages без настройки сервера и в превью одним файлом
 const stub = (path, title, section = title) => ({ path, component: StubPage, meta: { title, section } })
@@ -13,7 +14,7 @@ export const router = createRouter({
     { path: '/deduction', component: DeductionPage, meta: { title: 'Заявление на вычет' } },
     stub('/expenses', 'Расходы'),
     stub('/certificates', 'Справки'),
-    stub('/documents', 'Документы'),
+    { path: '/documents', component: DocumentsPage, meta: { title: 'Документы' } },
     stub('/notifications', 'Уведомления'),
     stub('/profile', 'Профиль'),
     stub('/search', 'Поиск'),

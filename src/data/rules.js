@@ -1,4 +1,4 @@
-import { demoExpense } from './demo.js'
+import { plural } from '../utils.js'
 
 // Правила вычетов, упрощённо, по ст. 219 и 220 НК РФ (редакция на 2026 год).
 // Прототип: расчёт примерный и не заменяет консультацию.
@@ -94,46 +94,52 @@ export function getIncomeTax(income, year) {
 
 // Документы для вычета. amountKind — документ, из которого берётся сумма расходов:
 // social — социальный вычет, purchase — покупка жилья, mortgage — проценты по ипотеке.
-// earlier — документ, который мог быть загружен раньше вместе с расходами (демо-данные из demo.js).
 export const DOCUMENTS = {
   medicine: [
-    { id: 'med-cert', title: 'Справка об оплате медицинских услуг для ФНС', where: 'Выдаёт клиника по запросу. Часто её можно получить онлайн.', amountKind: 'social', amountLabel: 'Сумма по справке, ₽', earlier: { file: 'Справки_об_оплате_медуслуг' } },
-    { id: 'med-contract', title: 'Договор с клиникой', where: 'Копия договора на оказание медицинских услуг.', earlier: { file: 'Договоры_с_клиниками' } },
+    { id: 'med-cert', title: 'Справка об оплате медицинских услуг для ФНС', where: 'Выдаёт клиника по запросу. Часто её можно получить онлайн.', amountKind: 'social', amountLabel: 'Сумма по справке, ₽' },
+    { id: 'med-contract', title: 'Договор с клиникой', where: 'Копия договора на оказание медицинских услуг.' },
     { id: 'med-receipt', title: 'Чеки об оплате', where: 'Для лекарств — рецепт и чеки из аптеки.', optional: true }
   ],
   education: [
-    { id: 'edu-cert', title: 'Справка об оплате образовательных услуг', where: 'Выдаёт учебное заведение по заявлению.', amountKind: 'social', amountLabel: 'Сумма по справке, ₽', earlier: { file: 'Справки_об_оплате_обучения' } },
-    { id: 'edu-contract', title: 'Договор на обучение', where: 'Договор с учебным заведением и допсоглашения, если цена менялась.', earlier: { file: 'Договор_на_обучение' } },
+    { id: 'edu-cert', title: 'Справка об оплате образовательных услуг', where: 'Выдаёт учебное заведение по заявлению.', amountKind: 'social', amountLabel: 'Сумма по справке, ₽' },
+    { id: 'edu-contract', title: 'Договор на обучение', where: 'Договор с учебным заведением и допсоглашения, если цена менялась.' },
     { id: 'edu-receipt', title: 'Чеки или платёжные поручения', where: 'Пригодятся, если в справке что-то не сходится.', optional: true }
   ],
   sport: [
-    { id: 'sport-cert', title: 'Справка об оплате физкультурно-оздоровительных услуг', where: 'Выдаёт фитнес-клуб или секция, если они есть в перечне Минспорта.', amountKind: 'social', amountLabel: 'Сумма по справке, ₽', earlier: { file: 'Справка_об_оплате_фитнес' } },
-    { id: 'sport-contract', title: 'Договор с фитнес-клубом или секцией', where: 'Договор или оферта, которую вы приняли при покупке абонемента.', earlier: { file: 'Договор_фитнес' } },
+    { id: 'sport-cert', title: 'Справка об оплате физкультурно-оздоровительных услуг', where: 'Выдаёт фитнес-клуб или секция, если они есть в перечне Минспорта.', amountKind: 'social', amountLabel: 'Сумма по справке, ₽' },
+    { id: 'sport-contract', title: 'Договор с фитнес-клубом или секцией', where: 'Договор или оферта, которую вы приняли при покупке абонемента.' },
     { id: 'sport-receipt', title: 'Чеки об оплате абонемента', where: 'Подойдёт фото чека с телефона.', optional: true }
   ],
   property: [
     { id: 'prop-contract', title: 'Договор купли-продажи или ДДУ', where: 'Из пакета документов по сделке.', amountKind: 'purchase', amountLabel: 'Стоимость жилья по договору, ₽' },
     { id: 'prop-egrn', title: 'Выписка из ЕГРН или акт приёма-передачи', where: 'Выписку можно заказать на Госуслугах.' },
     { id: 'prop-payment', title: 'Платёжные документы', where: 'Выписка банка или расписка продавца.' },
-    { id: 'prop-interest', title: 'Справка банка об уплаченных процентах', where: 'Если брали ипотеку. Банк выдаёт справку за каждый год.', optional: true, amountKind: 'mortgage', amountLabel: 'Проценты за год по справке, ₽', earlier: { file: 'Справка_банка_о_процентах' } }
+    { id: 'prop-interest', title: 'Справка банка об уплаченных процентах', where: 'Если брали ипотеку. Банк выдаёт справку за каждый год.', optional: true, amountKind: 'mortgage', amountLabel: 'Проценты за год по справке, ₽' }
   ]
 }
 
-// «Ранее загруженные» документы: есть только там, где в демо-данных записаны расходы за этот год.
-// Сумма в документе с суммой равна расходам из раздела «Расходы».
-export function earlierDocuments(type, year) {
-  const expense = demoExpense(type, year)
-  if (!expense) return {}
+// «Ранее загруженные» документы для формы: берутся из списка в разделе «Документы» за выбранный год.
+// В слот с суммой (справка, а для жилья — справка о процентах) идут все документы с суммой, сумма складывается.
+// В слот договора — договор, если он есть.
+export function earlierDocuments(type, year, items = []) {
+  const docs = items.filter((d) => d.category === type && Number(String(d.date).slice(0, 4)) === year)
+  const paid = docs.filter((d) => d.amount > 0)
+  const contracts = docs.filter((d) => d.kind === 'contract')
+  const amountSlot = type === 'property' ? 'mortgage' : 'social'
   const result = {}
-  for (const d of DOCUMENTS[type] || []) {
-    if (!d.earlier) continue
-    result[d.id] = {
-      name: `${d.earlier.file}_${year}.pdf`,
-      size: 180_000 + d.id.length * 13_000,
-      status: 'ready',
-      earlier: true,
-      uploadedAt: `14.02.${year + 1}`,
-      amount: d.amountKind ? String(expense.amount) : ''
+  for (const slot of DOCUMENTS[type] || []) {
+    if (slot.amountKind === amountSlot && paid.length) {
+      result[slot.id] = {
+        name: paid.length === 1 ? paid[0].file || paid[0].org : `${paid.length} ${plural(paid.length, ['документ', 'документа', 'документов'])} с суммой: справки и чеки`,
+        size: paid.reduce((a, d) => a + (d.size || 0), 0),
+        status: 'ready',
+        earlier: true,
+        uploadedAt: paid[0].addedAt,
+        amount: String(paid.reduce((a, d) => a + d.amount, 0)),
+        count: paid.length
+      }
+    } else if (slot.id.endsWith('-contract') && type !== 'property' && contracts.length) {
+      result[slot.id] = { name: contracts[0].file || contracts[0].org, size: contracts[0].size || 0, status: 'ready', earlier: true, uploadedAt: contracts[0].addedAt, amount: '' }
     }
   }
   return result

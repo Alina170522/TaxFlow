@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useFormStore, amountError } from '../store/form.js'
-import { MAX_FILE_MB, ACCEPTED_TYPES } from '../data/rules.js'
+import { MAX_FILE_MB } from '../data/rules.js'
+import { validateFile } from '../utils/files.js'
 import { fileSize, rub } from '../utils.js'
 import iconUpload from '../assets/icons/upload.svg'
 import iconFile from '../assets/icons/file.svg'
@@ -19,19 +20,11 @@ onBeforeUnmount(() => timers.forEach(clearTimeout))
 
 const touched = ref({})
 
-function validate(file) {
-  const okType = ACCEPTED_TYPES.includes(file.type) || /\.(pdf|jpe?g|png|heic|webp)$/i.test(file.name)
-  if (!okType) return 'Формат не поддерживается. Нужен PDF, JPG, PNG или HEIC.'
-  if (file.size > MAX_FILE_MB * 1024 * 1024) return `Файл больше ${MAX_FILE_MB} МБ. Сожмите фото или сохраните PDF меньшего размера.`
-  if (file.size === 0) return 'Файл пустой. Попробуйте выбрать его ещё раз.'
-  return null
-}
-
 function onFile(docId, event) {
   const file = event.target.files?.[0]
   event.target.value = ''
   if (!file) return
-  const error = validate(file)
+  const error = validateFile(file)
   if (error) {
     form.documents[docId] = { name: file.name, size: file.size, status: 'error', error }
     return

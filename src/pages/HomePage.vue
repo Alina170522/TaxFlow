@@ -1,8 +1,9 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useFormStore } from '../store/form.js'
+import { useLibraryStore } from '../store/library.js'
 import { rub, plural } from '../utils.js'
-import { DEMO_CATEGORIES, DEMO_YEAR, DEMO_CERTIFICATES, demoExpense, demoYearTotal } from '../data/demo.js'
+import { DEMO_YEAR, DEMO_CERTIFICATES } from '../data/demo.js'
 import LoopVideo from '../components/LoopVideo.vue'
 import AiHelper from '../components/AiHelper.vue'
 import heroVideo from '../assets/img/hero-coins.mp4'
@@ -14,15 +15,14 @@ import iconCamera from '../assets/icons/camera-button.svg'
 import iconUp from '../assets/icons/up.svg'
 
 const form = useFormStore()
+const library = useLibraryStore()
 const helperOpen = ref(false)
 
-const categories = DEMO_CATEGORIES.map((c) => {
-  const e = demoExpense(c.type, DEMO_YEAR)
-  const count = e ? e.orgs.length : 0
-  return { ...c, amount: e ? e.amount : 0, orgs: `${count} ${plural(count, ['организация', 'организации', 'организаций'])}` }
-})
-
-const yearTotal = demoYearTotal(DEMO_YEAR)
+// Суммы считаются из раздела «Документы»: новый документ сразу меняет карточку и итог
+const categories = computed(() =>
+  library.totals(DEMO_YEAR).map((c) => ({ ...c, orgs: `${c.orgs} ${plural(c.orgs, ['организация', 'организации', 'организаций'])}` }))
+)
+const yearTotal = computed(() => library.yearTotal(DEMO_YEAR))
 
 // Сколько расходов этого года уже попало в заявление на вычет
 const inApplication = computed(() => (form.type && form.year === DEMO_YEAR ? form.totalExpenses : 0))
@@ -45,15 +45,15 @@ function toTop() {
           <p>FlowTax собирает документы, считает расходы и помогает оформить налоговый вычет.</p>
         </div>
         <div class="hero__actions">
-          <RouterLink class="hero__add" to="/documents">
+          <RouterLink class="hero__add" :to="{ path: '/documents', query: { add: 'file' } }">
             <span class="icon-plus hero__plus" aria-hidden="true" />
             Добавить документ
             <span class="icon-arrow hero__arrow" aria-hidden="true" />
           </RouterLink>
-          <RouterLink class="hero__camera" to="/documents" aria-label="Сфотографировать документ">
+          <RouterLink class="hero__camera" :to="{ path: '/documents', query: { add: 'photo' } }" aria-label="Сфотографировать документ">
             <img :src="iconCamera" width="44" height="44" alt="" />
           </RouterLink>
-          <RouterLink class="text-link hero__manual" to="/expenses">
+          <RouterLink class="text-link hero__manual" :to="{ path: '/documents', query: { add: 'manual' } }">
             <span>Добавить<span class="hero__long"> данные</span> вручную</span>
             <span class="icon-arrow text-link__arrow" aria-hidden="true" />
           </RouterLink>

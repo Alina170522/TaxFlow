@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { DEDUCTION_TYPES, PERSONS, DOCUMENTS, RATE, getLimit, getIncomeTax, earlierDocuments } from '../data/rules.js'
+import { useLibraryStore } from './library.js'
 
 // v2: в форме нет шага «Расходы», суммы берутся из документов
 const STORAGE_KEY = 'flowtax-draft-v2'
@@ -139,7 +140,7 @@ export const useFormStore = defineStore('form', {
         this.type = type
         this.person = 'me'
         this.expensive = false
-        this.documents = earlierDocuments(type, this.year)
+        this.documents = earlierDocuments(type, this.year, useLibraryStore().items)
       }
     },
 
@@ -148,7 +149,18 @@ export const useFormStore = defineStore('form', {
       this.year = year
       if (!this.persons.some((p) => p.id === this.person)) this.person = 'me'
       // Справки выдаются за конкретный год, поэтому подставляем документы за новый год
-      if (this.type) this.documents = earlierDocuments(this.type, year)
+      if (this.type) this.documents = earlierDocuments(this.type, year, useLibraryStore().items)
+    },
+
+    // Документ, добавленный в разделе «Документы», сразу попадает в черновик заявления за тот же год.
+    // Файлы, загруженные прямо в форме, не трогаем
+    syncEarlier() {
+      if (!this.type || this.done) return
+      const fresh = earlierDocuments(this.type, this.year, useLibraryStore().items)
+      const docs = { ...this.documents }
+      for (const [id, doc] of Object.entries(docs)) if (doc.earlier && !fresh[id]) delete docs[id]
+      for (const [id, doc] of Object.entries(fresh)) if (!docs[id] || docs[id].earlier) docs[id] = doc
+      this.documents = docs
     },
 
     goTo(step) {
