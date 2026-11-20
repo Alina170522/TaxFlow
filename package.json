@@ -1,30 +1,24 @@
 {
   "name": "flowtax",
+  "version": "0.1.0",
   "private": true,
-  "version": "0.0.0",
+  "description": "FlowTax — прототип сервиса для оформления налогового вычета: пятишаговая форма и помощник",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
+    "build:single": "vite build --mode single",
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "pinia": "^2.3.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.6.5"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/node": "^24.13.3",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.4",
-    "eslint": "^10.8.0",
-    "eslint-plugin-react-hooks": "^7.1.1",
-    "eslint-plugin-react-refresh": "^0.5.3",
-    "globals": "^17.7.0",
-    "typescript": "~6.0.2",
-    "typescript-eslint": "^8.65.0",
-    "vite": "^8.2.0"
+    "@vitejs/plugin-vue": "^5.2.4",
+    "less": "^4.2.2",
+    "vite": "^6.3.5",
+    "vite-plugin-singlefile": "^2.2.0"
   }
 }

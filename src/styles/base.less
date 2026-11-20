@@ -1,0 +1,298 @@
+// Токены из макета FlowTax в Figma: коллекция FlowTax Colors и стили текста FlowTax/*.
+// Имена совпадают с переменными в Figma, чтобы правки переносились один к одному.
+:root {
+  --color-bg: #fdfeff;
+  --color-surface: #ffffff;
+  --color-bg-lilac: #ece8fc;
+  --color-card-light: #c9caed;
+  --color-card-dark: #2b2644;
+  --color-ink: #1d2340;
+  --color-ink-hover: #2d3668;
+  --color-button-push: #4a4066;
+  --color-heading-secondary: #626a8a;
+  --color-text-2: #4f5878;
+  --color-text-muted: #6e7190;
+  --color-text-on-dark: #ece8fc;
+  --color-text-on-dark-muted: #b9b6d6;
+  --color-accent: #7a62d0;
+  --color-accent-dark: #6b52c4;
+  --color-border: #dad6ee;
+  --color-disabled: #cfcfd6;
+  --color-track: #dadadf;
+  --color-error: #e5484d;
+  --color-error-bg: #fff5f5;
+  --color-error-bg-strong: #fbd9da;
+  --color-skeleton-base: #e6e2f6;
+  --color-skeleton-highlight: #f3f1fb;
+  --color-scrim: rgba(29, 35, 64, 0.45);
+
+  // В макете нет цветов успеха и предупреждения, оставлены из прототипа
+  --color-success: #2e7d5b;
+  --color-success-bg: #e7f5ee;
+  --color-warn: #9a6400;
+  --color-warn-bg: #fff4e0;
+
+  // Скругления из макета: иконки 8, строки файлов 12, кнопки 15, карточки 20, поля 22
+  --radius-xs: 8px;
+  --radius-s: 12px;
+  --radius-m: 15px;
+  --radius-l: 20px;
+  --radius-field: 22px;
+  --shadow: 0 10px 18px rgba(29, 35, 64, 0.2);
+  --font: 'Manrope', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+// В макете все стили текста — Manrope SemiBold
+html,
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.37;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+// Кнопки: Default / Hover / Push / Disabled из UI-kit
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-m);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.25;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+  &__icon {
+    flex: none;
+    display: block;
+  }
+
+  &--primary {
+    background: var(--color-ink);
+    color: var(--color-bg);
+    &:hover:not(:disabled) {
+      background: var(--color-ink-hover);
+    }
+    &:active:not(:disabled) {
+      background: var(--color-button-push);
+    }
+    &:disabled {
+      background: var(--color-disabled);
+    }
+  }
+  &--secondary {
+    background: transparent;
+    border-color: var(--color-card-light);
+    color: var(--color-ink);
+    &:hover:not(:disabled) {
+      background: var(--color-bg-lilac);
+    }
+    &:active:not(:disabled) {
+      background: var(--color-card-light);
+    }
+  }
+  &--ghost {
+    background: transparent;
+    padding: 0 12px;
+    color: var(--color-heading-secondary);
+    &:hover:not(:disabled) {
+      color: var(--color-ink);
+    }
+  }
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+// Иконки из макета, окрашенные в цвет текста кнопки
+.icon-plus,
+.icon-arrow {
+  flex: none;
+  display: inline-block;
+  background: currentColor;
+}
+.icon-plus {
+  width: 18px;
+  height: 15px;
+  -webkit-mask: url('../assets/icons/plus.svg') center / contain no-repeat;
+  mask: url('../assets/icons/plus.svg') center / contain no-repeat;
+}
+.icon-arrow {
+  width: 16px;
+  height: 14px;
+  -webkit-mask: url('../assets/icons/arrow-light.svg') center / contain no-repeat;
+  mask: url('../assets/icons/arrow-light.svg') center / contain no-repeat;
+}
+
+// Поля: Default / Filled / Error из UI-kit
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__label {
+    font-size: 14px;
+    line-height: 1.25;
+  }
+  &__hint {
+    font-size: 12px;
+    color: var(--color-heading-secondary);
+  }
+  &__error {
+    font-size: 14px;
+    line-height: 1.25;
+    color: var(--color-error);
+  }
+}
+
+.input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--color-card-light);
+  border-radius: var(--radius-field);
+  background: var(--color-bg-lilac);
+  font-size: 14px;
+  line-height: 1.25;
+  transition: border-color 0.15s, background 0.15s;
+
+  &::placeholder {
+    color: rgba(0, 0, 0, 0.2);
+  }
+  &:hover {
+    border-color: var(--color-accent);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--color-accent);
+  }
+  &:not(:placeholder-shown):not([type='date']),
+  &--filled {
+    background: var(--color-card-light);
+    border-color: var(--color-accent);
+  }
+  // Ошибка важнее состояния «заполнено»
+  &.input--error,
+  &.input--error:not(:placeholder-shown):not([type='date']) {
+    background: var(--color-bg-lilac);
+    border-color: var(--color-error);
+  }
+}
+
+// На телефоне поле меньше 16px заставляет iOS увеличивать страницу при фокусе
+@media (pointer: coarse) {
+  .input {
+    font-size: 16px;
+  }
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-l);
+  padding: 20px;
+}
+
+.notice {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-s);
+  font-size: 14px;
+
+  &--warn {
+    background: var(--color-warn-bg);
+    color: var(--color-warn);
+  }
+  &--error {
+    background: var(--color-error-bg);
+    border: 1px solid var(--color-error);
+    color: var(--color-error);
+  }
+  &--success {
+    background: var(--color-success-bg);
+    color: var(--color-success);
+  }
+  &--info {
+    background: var(--color-bg-lilac);
+    color: var(--color-ink);
+  }
+}
+
+// Skeleton: цвета skeleton-base и skeleton-highlight из макета
+.skeleton {
+  border-radius: var(--radius-xs);
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton-base) 25%,
+    var(--color-skeleton-highlight) 50%,
+    var(--color-skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite linear;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+  * {
+    transition: none !important;
+  }
+}
